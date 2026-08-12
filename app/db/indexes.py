@@ -59,4 +59,11 @@ async def ensure_indexes() -> None:
     except Exception as e:
         logger.error(f"Error creating auxiliary module indexes: {e}")
 
+    # 7. Employees Collection Indexes
+    try:
+        await db["employees"].create_index([("username", 1)], unique=True, name="idx_employees_username")
+        await db["employees"].create_index([("email", 1)], unique=True, name="idx_employees_email")
+    except Exception as e:
+        logger.error(f"Error creating indexes on employees: {e}")
+
     logger.info("Database index creation checks completed.")

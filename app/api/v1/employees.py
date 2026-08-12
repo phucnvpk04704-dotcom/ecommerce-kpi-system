@@ -5,7 +5,7 @@ from bson import ObjectId
 from app.services.employee import EmployeeService
 from app.schemas.employee import EmployeeCreate, EmployeeUpdate, EmployeeResponse
 from app.dependencies.services import get_employee_service
-from app.dependencies.auth import require_admin
+from app.dependencies.auth import require_admin, require_manager
 from app.models.employee import Employee
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
@@ -34,7 +34,7 @@ async def create_employee(
 @router.get("", response_model=List[EmployeeResponse])
 @router.get("/", response_model=List[EmployeeResponse], include_in_schema=False)
 async def list_employees(
-    admin_user: Annotated[Employee, Depends(require_admin())],
+    manager_user: Annotated[Employee, Depends(require_manager())],
     employee_service: Annotated[EmployeeService, Depends(get_employee_service)],
     skip: int = 0,
     limit: int = 100
@@ -49,7 +49,7 @@ async def list_employees(
 @router.get("/{employee_id}", response_model=EmployeeResponse)
 async def get_employee(
     employee_id: str,
-    admin_user: Annotated[Employee, Depends(require_admin())],
+    manager_user: Annotated[Employee, Depends(require_manager())],
     employee_service: Annotated[EmployeeService, Depends(get_employee_service)]
 ) -> Employee:
     """

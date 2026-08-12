@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from app.services.auth import AuthService
 from app.schemas.auth import LoginRequest, LoginResponse
 from app.dependencies.services import get_auth_service
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, oauth2_scheme
 from app.models.employee import Employee
 from app.core.enums.employee import Role
 
@@ -62,11 +62,25 @@ async def login(
 @router.post("/logout")
 async def logout(
     session_id: str,
+    current_user: Annotated[Employee, Depends(get_current_user)],
+    token: Annotated[str, Depends(oauth2_scheme)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ) -> dict[str, bool]:
     """
     Invalidate an employee session and revoke credentials state.
     """
+    try:
+        payload = await auth_service.validate_token(token)
+        if payload.session_id != session_id and current_user.role != Role.ADMIN:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to revoke this session"
+            )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e)
+        )
     await auth_service.logout(session_id)
     return {"success": True}
 

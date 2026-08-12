@@ -19,7 +19,7 @@ from app.schemas.employee_session import (
     EmployeeSessionUpdate,
     EmployeeSessionResponse
 )
-from app.schemas.kpi import KPIDailyBase, KPIDailyCreate, KPIDailyResponse
+from app.schemas.kpi import KPIDailyBase, KPIDailyCreate, KPIDailyResponse, KPIAggregationResponse
 from app.schemas.notification import (
     NotificationBase,
     NotificationCreate,
@@ -63,6 +63,7 @@ __all__ = [
     "KPIDailyBase",
     "KPIDailyCreate",
     "KPIDailyResponse",
+    "KPIAggregationResponse",
     "NotificationBase",
     "NotificationCreate",
     "NotificationUpdate",

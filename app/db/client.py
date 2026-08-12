@@ -15,7 +15,23 @@ class MongoClientManager:
         if cls.client is None:
             logger.info(f"Connecting to MongoDB at {settings.MONGODB_URL}...")
             cls.client = AsyncIOMotorClient(settings.MONGODB_URL)
-            cls.db = cls.client[settings.DATABASE_NAME]
+            
+            from decimal import Decimal
+            from bson.codec_options import TypeCodec, TypeRegistry, CodecOptions
+            from bson.decimal128 import Decimal128
+
+            class DecimalCodec(TypeCodec):
+                python_type = Decimal
+                bson_type = Decimal128
+
+                def transform_python(self, value):
+                    return Decimal128(value)
+
+                def transform_bson(self, value):
+                    return value.to_decimal()
+
+            codec_options = CodecOptions(type_registry=TypeRegistry([DecimalCodec()]))
+            cls.db = cls.client.get_database(settings.DATABASE_NAME, codec_options=codec_options)
             logger.info("Successfully connected to MongoDB.")
 
     @classmethod

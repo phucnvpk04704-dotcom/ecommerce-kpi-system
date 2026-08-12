@@ -5,9 +5,9 @@ from pydantic import BaseModel
 from bson import ObjectId
 
 from app.services.kpi import KPIService
-from app.schemas.kpi import KPIDailyCreate, KPIDailyResponse
+from app.schemas.kpi import KPIDailyCreate, KPIDailyResponse, KPIAggregationResponse
 from app.dependencies.services import get_kpi_service
-from app.dependencies.auth import require_manager, require_admin
+from app.dependencies.auth import require_manager, require_admin, get_current_user
 from app.models.employee import Employee
 from app.models.kpi import KPIDaily
 from app.models.base import PyObjectId
@@ -71,6 +71,18 @@ async def get_employee_kpi_history(
         start_date=start_date,
         end_date=end_date
     )
+
+
+@router.get("/summary", response_model=KPIAggregationResponse)
+async def get_kpi_summary(
+    current_user: Annotated[Employee, Depends(get_current_user)],
+    kpi_service: Annotated[KPIService, Depends(get_kpi_service)]
+) -> KPIAggregationResponse:
+    """
+    Retrieve store-wide aggregated KPI metrics.
+    Any authenticated employee can view.
+    """
+    return await kpi_service.get_kpi_aggregation()
 
 
 @router.get("/{kpi_id}", response_model=KPIDailyResponse)

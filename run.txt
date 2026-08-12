@@ -1,1 +1,5 @@
 uvicorn app.main:app --reload
+npm install
+npm run dev
+D:\flutter\bin\flutter.bat run -d chrome
+& "C:\Users\DELL\AppData\Local\Android\Sdk\emulator\emulator.exe" -avd Pixel_8

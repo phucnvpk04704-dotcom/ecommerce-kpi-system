@@ -29,3 +29,14 @@ class KPIDailyResponse(KPIDailyBase):
         from_attributes=True,
         populate_by_name=True
     )
+
+
+class KPIAggregationResponse(BaseModel):
+    orders_score: float
+    chats_score: float
+    products_score: float
+    revenue_score: float
+    penalty_deductions: float
+    total_kpi_score: float
+    count: int
+

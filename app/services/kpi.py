@@ -37,3 +37,27 @@ class KPIService(BaseService[KPIDaily, KPIDailyRepository]):
         Reuses repository.create().
         """
         return await self.repository.create(schema)
+
+    async def get_kpi_aggregation(self) -> dict:
+        """Retrieve aggregated KPI scores and penalty points, fallback to default values if empty."""
+        result = await self.repository.get_kpi_aggregation()
+        if not result:
+            return {
+                "orders_score": 0.0,
+                "chats_score": 0.0,
+                "products_score": 0.0,
+                "revenue_score": 0.0,
+                "penalty_deductions": 0.0,
+                "total_kpi_score": 0.0,
+                "count": 0
+            }
+        return {
+            "orders_score": round(result.get("orders_score", 0.0), 2),
+            "chats_score": round(result.get("chats_score", 0.0), 2),
+            "products_score": round(result.get("products_score", 0.0), 2),
+            "revenue_score": round(result.get("revenue_score", 0.0), 2),
+            "penalty_deductions": round(result.get("penalty_deductions", 0.0), 2),
+            "total_kpi_score": round(result.get("total_kpi_score", 0.0), 2),
+            "count": result.get("count", 0)
+        }
+

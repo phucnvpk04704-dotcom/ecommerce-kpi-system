@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Ecommerce KPI Agent",
+  "version": "1.0.0",
+  "description": "Enterprise Browser Extension for E-Commerce KPI Tracking & Fraud Alert System",
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:5173/*",
+        "http://127.0.0.1:5173/*"
+      ],
+      "js": ["src/content/adminSync.ts"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://seller.shopee.vn/*",
+        "https://chat.shopee.vn/*",
+        "https://seller.lazada.vn/*",
+        "https://seller-vn.tiktok.com/*",
+        "https://sellercenter.tiki.vn/*"
+      ],
+      "js": ["src/content/platformIngest.ts"],
+      "css": ["src/content/styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "Ecommerce KPI Popup"
+  },
+  "options_ui": {
+    "page": "src/options/index.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://seller.shopee.vn/*",
+    "https://chat.shopee.vn/*",
+    "https://seller.lazada.vn/*",
+    "https://seller-vn.tiktok.com/*",
+    "https://sellercenter.tiki.vn/*",
+    "http://127.0.0.1:8000/*"
+  ]
+}

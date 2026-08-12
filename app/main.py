@@ -51,12 +51,19 @@ def create_app() -> FastAPI:
     )
 
     # Mount Cross-Origin Resource Sharing (CORS) Middleware
+    cors_params = {
+        "allow_origins": settings.CORS_ORIGINS,
+        "allow_credentials": True,
+        "allow_methods": ["*"],
+        "allow_headers": ["*"]
+    }
+    # In development or staging, dynamically allow localhost ports
+    if settings.ENVIRONMENT in ("development", "staging"):
+        cors_params["allow_origin_regex"] = r"^https?://(localhost|127.0.0.1)(:\d+)?$"
+
     application.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Set to specific domains in production settings
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"]
+        **cors_params
     )
 
     # 1. Root diagnostic health route

@@ -21,10 +21,18 @@ class Settings(BaseSettings):
     DATABASE_NAME: str = "ecommerce_kpi_system"
 
     # Security
-    JWT_SECRET_KEY: str = "replace-this-with-a-secure-random-secret-key-for-jwt-in-production"
+    JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     SESSION_EXPIRE_HOURS: int = 24
+
+    # CORS Configuration
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8080",
+        "http://127.0.0.1:8080"
+    ]
 
     # Email
     SMTP_HOST: str = "smtp.gmail.com"

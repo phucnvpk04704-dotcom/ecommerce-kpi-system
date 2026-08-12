@@ -1,27 +1,5 @@
 import axios from 'axios';
-
-const API_BASE = 'http://127.0.0.1:8000/api/v1';
-
-const apiClient = axios.create({
-  baseURL: API_BASE,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Auto-inject bearer token
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+import apiClient, { API_BASE } from '../services/apiClient';
 
 export const login = async (username: string, password: string) => {
   const params = new URLSearchParams();

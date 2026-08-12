@@ -32,3 +32,23 @@ class KPIDailyRepository(BaseRepository[KPIDaily, KPIDailyCreate, None]):
             limit=10000,  # High limit to fetch complete range history without paging truncations
             sort=[("date", 1)]
         )
+
+    async def get_kpi_aggregation(self) -> Optional[dict]:
+        """Aggregate KPI scores and penalty points from the entire kpi_daily collection."""
+        pipeline = [
+            {
+                "$group": {
+                    "_id": None,
+                    "orders_score": {"$avg": "$orders_score"},
+                    "chats_score": {"$avg": "$chats_score"},
+                    "products_score": {"$avg": "$products_score"},
+                    "revenue_score": {"$avg": "$revenue_score"},
+                    "penalty_deductions": {"$avg": "$penalty_deductions"},
+                    "total_kpi_score": {"$avg": "$total_kpi_score"},
+                    "count": {"$sum": 1}
+                }
+            }
+        ]
+        res = await self.collection.aggregate(pipeline).to_list(length=1)
+        return res[0] if res else None
+

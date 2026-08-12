@@ -1,0 +1,2 @@
+// Types directory placeholder
+export {};
